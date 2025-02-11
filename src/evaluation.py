@@ -18,36 +18,37 @@ def extract_function_body(code, entry_point):
     except:
         return code
 
-def check_code(prompt, final, test, entry_point):
-    # signal.signal(signal.SIGALRM, timeout_handler)
-    final = extract_function_body(final, entry_point)
-    if final != None:
-        final_code = prompt + final
-    else:
-        final_code = prompt
-    
-    try:
-        exec(final_code)
-        # print(final_code)
-    except:
-        # print('wrong code')
-        return False
-    
-    # signal.alarm(10)
-    exec(test)
+def eval_humaneval(prompt, code, test, entry_point):
+    if entry_point not in code:
+        code = prompt + code
+    test = test.replace('candidate', entry_point)
+    full_test = '''
+{code}
 
+{test}
+
+check({entry_point})
+    '''
+
+    full_test = full_test.format(code=code, test=test, entry_point=entry_point)
+    with open('temp.py', 'w') as f:
+        f.write(full_test)
+    
     try:
-        locals()['check']((locals()[entry_point]))
-        # print('Success')
+        # signal.signal(signal.SIGALRM, timeout_handler)
+        subprocess.run(["python3", "temp.py"], check=True, timeout=5)
+        print("correct")
+        # signal.alarm(5)
         return True
     except Exception as e:
+        # print(full_test)
         # print(e)
+        print("failed")
         return False
-    # finally:
-        # signal.alarm(0)  # Cancel the alarm
     
-def MBPP_check_code(code, test_list):
-    full_test = '''
+def eval_mbpp(code, test_string, is_plus):
+    if not is_plus:
+        full_test = '''
 {code}
 
 test_list = {test_string}
@@ -57,22 +58,33 @@ def run_tests():
     Executes each test in test_list using 'exec'.
     If all assertions pass, it prints a success message.
     """
-    exec(test_list[0])
-    print("All tests passed successfully!")
+    for test in test_list:
+        # Execute each test string, which includes the assert statement
+        exec(test)
 
 if __name__ == "__main__":
     run_tests()
         '''
-    # code = code.split('assert')[0]
-    full_test = full_test.format(code=code, test_string=test_list)
-    with open('test.py', 'w') as f:
+    else:
+        full_test = '''
+{code}
+
+{test_string}
+'''
+        
+    full_test = full_test.format(code=code, test_string=test_string)
+    with open('temp.py', 'w') as f:
         f.write(full_test)
+    # print(full_test)
+    # quit()
     try:
-        signal.signal(signal.SIGALRM, timeout_handler)
-        subprocess.run(["python3", "test.py"], check=True)
-        signal.alarm(5)
+        # signal.signal(signal.SIGALRM, timeout_handler)
+        subprocess.run(["python3", "temp.py"], check=True, timeout=5)
+        print("correct")
+        # signal.alarm(5)
         return True
-    except:
+    except Exception as e:
+        print("failed")
         return False
 
 def APPS_check_code(final, input, output):
