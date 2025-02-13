@@ -18,7 +18,7 @@ def load_HumanEval_dataset():
         record['ground_truth_code'] = data['canonical_solution']
         record['category'] = data['category']
         record['test'] = data['test']
-        record['code_complexity'] = utils.calculate_weighted_complexity(data['canonical_solution'], True)
+        record['code_complexity'] = utils.calculate_weighted_complexity(data['canonical_solution'], True, False)
 
         final_dataset.append(record)
     return final_dataset

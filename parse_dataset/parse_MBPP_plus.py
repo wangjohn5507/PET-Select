@@ -19,7 +19,7 @@ def load_MBPP_plus_dataset():
         record['category'] = dataset[data['task_id']-1]['category']
         record['test'] = data['test']
         record['test_list'] = data['test_list']
-        record['code_complexity'] = utils.calculate_weighted_complexity(data['code'], False)
+        record['code_complexity'] = utils.calculate_weighted_complexity(data['code'], False, True)
 
         final_dataset.append(record)
     return final_dataset
