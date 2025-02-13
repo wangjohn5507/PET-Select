@@ -17,6 +17,56 @@ def extract_function_body(code, entry_point):
                 return indented_code
     except:
         return code
+    
+def check_code(prompt, final, test, entry_point):
+    signal.signal(signal.SIGALRM, timeout_handler)
+    final = extract_function_body(final, entry_point)
+    if final != None:
+        final_code = prompt + final
+    else:
+        final_code = prompt
+    
+    try:
+        exec(final_code)
+        print(final_code)
+    except:
+        print('wrong code')
+        return False
+    
+    signal.alarm(10)
+    exec(test)
+
+    try:
+        locals()['check']((locals()[entry_point]))
+        print('Success')
+        return True
+    except Exception as e:
+        # print(e)
+        return False
+    finally:
+        signal.alarm(0)  # Cancel the alarm
+    
+def MBPP_check_code(final, test):
+    signal.signal(signal.SIGALRM, timeout_handler)
+    try:
+        exec(final)
+        print(final)
+    except:
+        print('wrong code')
+        return False
+    
+    signal.alarm(10)
+    try:
+        exec(test)
+        print('Success')
+        return True
+    except TimeoutError as e:
+        print('Test failed due to timeout:', str(e))
+        return False
+    except Exception as e:
+        return False
+    finally:
+        signal.alarm(0)  # Cancel the alarm
 
 def eval_humaneval(prompt, code, test, entry_point):
     if entry_point not in code:

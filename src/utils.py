@@ -1,7 +1,7 @@
-import tiktoken
+# import tiktoken
 import json
 import ast
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from sklearn.metrics import average_precision_score, precision_recall_curve
@@ -153,12 +153,18 @@ def get_largest_and_smallest_cognitive_complexity(dataset, is_humaneval=True):
         smallest = min(smallest, calculate_cognitive_complexity(code))
     return largest, smallest
 
-def calculate_weighted_complexity(code, is_humaneval=True):
+def calculate_weighted_complexity(code, is_humaneval=True, is_plus=True):
     if is_humaneval:
-        dataset = list(map(json.loads, open('dataset/HumanEval_category.jsonl')))
+        if is_plus:
+            dataset = list(map(json.loads, open('dataset/HumanEval_plus.jsonl')))
+        else:
+            dataset = list(map(json.loads, open('dataset/HumanEval_category.jsonl')))
         code = 'def function():\n' + code
     else:
-        dataset = list(map(json.loads, open('dataset/MBPP_category.jsonl')))
+        if is_plus:
+            dataset = list(map(json.loads, open('dataset/MBPP_plus.jsonl')))
+        else:
+            dataset = list(map(json.loads, open('dataset/MBPP_category.jsonl')))
     physical_loc = count_physical_loc(code)
     cyclomatic_complexity = calculate_cyclomatic_complexity(code)
     halstead_complexity = calculate_halstead_complexity(code)
@@ -182,9 +188,9 @@ def calculate_weighted_complexity(code, is_humaneval=True):
     # Define the weights for each complexity metric
     weights = {
         'physical_loc': 0.2,
-        'cyclomatic_complexity': 0.2,
-        'halstead_complexity': 0.2,
-        'mi': 0.2,
+        'cyclomatic_complexity': 0.5,
+        'halstead_complexity': 0.05,
+        'mi': 0.05,
         'cognitive_complexity': 0.2
     }
     
