@@ -167,7 +167,7 @@ def main(arguments):
     num_pos = sum(train_label_list)
     num_neg = len(train_label_list) - num_pos
     print(num_pos, num_neg)
-    pos_weight = torch.tensor([(num_neg/num_pos)+0.8], dtype=torch.float32)
+    pos_weight = torch.tensor([(num_neg/num_pos)], dtype=torch.float32)
     print(pos_weight)
 
     criterion = nn.BCELoss()  # binary cross-entropy loss
