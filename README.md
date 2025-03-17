@@ -98,13 +98,4 @@ bash grid_search_complexity.sh
 Notes: Remember to change all the configurations in the bash script.
 
 
-## Citation
-```bash
-@article{2025petselect,
-  title={Prompting Techniques Selection for Code Generation with Contrastive Complexity Prediction},
-  year={2025}
-}
-```
-
-
 ---
