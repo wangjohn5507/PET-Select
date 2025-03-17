@@ -14,14 +14,17 @@ from torch.utils.data import DataLoader, random_split
 import os
 
 def set_seed(seed):
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed(seed)
-        torch.cuda.manual_seed_all(seed)
+        #torch.cuda.manual_seed_all(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
+    torch.use_deterministic_algorithms(True)
 
 set_seed(2)
 
@@ -144,6 +147,7 @@ class BNDropout(nn.Module):
 
 # Initialize model
 # model_name = 'distilroberta-base'
+
 model_name = 'microsoft/codebert-base'
 word_embedding_model = models.Transformer(model_name)
 pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension())
@@ -164,11 +168,14 @@ train_size = int(0.8 * len(triplet_dataset))
 # test_size = len(triplet_dataset) - train_size - eval_size
 eval_size = len(triplet_dataset) - train_size
 
+g = torch.Generator()
+g.manual_seed(2)
+
 # train_examples, eval_examples, test_examples = random_split(triplet_dataset, [train_size, eval_size, test_size])
-train_examples, eval_examples = random_split(triplet_dataset, [train_size, eval_size])
+train_examples, eval_examples = random_split(triplet_dataset, [train_size, eval_size], generator=g)
 
 # Create DataLoader
-train_dataloader = DataLoader(train_examples, shuffle=True, batch_size=16)
+train_dataloader = DataLoader(train_examples, shuffle=True, batch_size=16, num_workers=0)
 # train_loss = losses.TripletLoss(model, TripletDistanceMetric.COSINE)
 train_loss = losses.TripletLoss(model)
 
@@ -176,7 +183,7 @@ train_loss = losses.TripletLoss(model)
 # Create evaluator
 evaluator = evaluation.TripletEvaluator.from_input_examples(eval_examples, name='eval')
 
-num_epochs = 20
+num_epochs = 15
 warmup_steps = int(len(train_dataloader) * num_epochs * 0.1)
 
 print(warmup_steps)
