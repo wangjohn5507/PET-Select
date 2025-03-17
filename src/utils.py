@@ -93,12 +93,21 @@ def get_largest_and_smallest_physical_loc(dataset, is_humaneval=True, is_apps=Tr
     smallest = 100
     for idx, per_data in enumerate(dataset):
         if is_humaneval:
-            code = per_data['canonical_solution']
+            code = per_data['ground_truth_code']
             code = 'def function():\n' + code
         elif is_apps==False:
-            code = per_data['code']
-        else:
             code = per_data['ground_truth_code']
+        else:
+            if idx == 100 or idx == 455 or idx == 499 or idx == 2888 or idx == 2924:
+                code = per_data['ground_truth_code_list'][1]
+            elif idx == 559 or idx == 1431 or idx==2653 or idx==2661 or idx==2721:
+                code = per_data['ground_truth_code_list'][2]
+            elif idx == 2723:
+                code = per_data['ground_truth_code_list'][10]
+            elif idx == 2598 or idx == 2726 or idx == 3763:
+                continue
+            else:
+                code = per_data['ground_truth_code']
         largest = max(largest, count_physical_loc(code))
         smallest = min(smallest, count_physical_loc(code))
     return largest, smallest
@@ -107,14 +116,21 @@ def get_largest_and_smallest_cyclomatic_complexity(dataset, is_humaneval=True, i
     largest = 0
     smallest = 100
     for idx, per_data in enumerate(dataset):
+        # print(idx)
         if is_humaneval:
-            code = per_data['canonical_solution']
+            code = per_data['ground_truth_code']
             code = 'def function():\n' + code
         elif is_apps==False:
-            code = per_data['code']
+            code = per_data['ground_truth_code']
         else:
-            if idx == 100 or idx == 455 or idx == 499:
+            if idx == 100 or idx == 455 or idx == 499 or idx == 2888 or idx == 2924:
                 code = per_data['ground_truth_code_list'][1]
+            elif idx == 559 or idx == 1431 or idx==2653 or idx==2661 or idx==2721:
+                code = per_data['ground_truth_code_list'][2]
+            elif idx == 2723:
+                code = per_data['ground_truth_code_list'][10]
+            elif idx == 2598 or idx == 2726 or idx == 3763:
+                continue
             else:
                 code = per_data['ground_truth_code']
         # print(idx)
@@ -127,13 +143,19 @@ def get_largest_and_smallest_halstead_complexity(dataset, is_humaneval=True, is_
     smallest = 100
     for idx, per_data in enumerate(dataset):
         if is_humaneval:
-            code = per_data['canonical_solution']
+            code = per_data['ground_truth_code']
             code = 'def function():\n' + code
         elif is_apps==False:
-            code = per_data['code']
+            code = per_data['ground_truth_code']
         else:
-            if idx == 100 or idx == 455 or idx == 499:
+            if idx == 100 or idx == 455 or idx == 499 or idx == 2888 or idx == 2924:
                 code = per_data['ground_truth_code_list'][1]
+            elif idx == 559 or idx == 1431 or idx==2653 or idx==2661 or idx==2721:
+                code = per_data['ground_truth_code_list'][2]
+            elif idx == 2723:
+                code = per_data['ground_truth_code_list'][10]
+            elif idx == 2598 or idx == 2726 or idx == 3763:
+                continue
             else:
                 code = per_data['ground_truth_code']
         largest = max(largest, calculate_halstead_complexity(code))
@@ -145,13 +167,19 @@ def get_largest_and_smallest_mi(dataset, is_humaneval=True, is_apps=True):
     smallest = 100
     for idx, per_data in enumerate(dataset):
         if is_humaneval:
-            code = per_data['canonical_solution']
+            code = per_data['ground_truth_code']
             code = 'def function():\n' + code
         elif is_apps==False:
-            code = per_data['code']
+            code = per_data['ground_truth_code']
         else:
-            if idx == 100 or idx == 455 or idx == 499:
+            if idx == 100 or idx == 455 or idx == 499 or idx == 2888 or idx == 2924:
                 code = per_data['ground_truth_code_list'][1]
+            elif idx == 559 or idx == 1431 or idx==2653 or idx==2661 or idx==2721:
+                code = per_data['ground_truth_code_list'][2]
+            elif idx == 2723:
+                code = per_data['ground_truth_code_list'][10]
+            elif idx == 2598 or idx == 2726 or idx == 3763:
+                continue
             else:
                 code = per_data['ground_truth_code']
         largest = max(largest, calculate_mi(code))
@@ -163,13 +191,19 @@ def get_largest_and_smallest_cognitive_complexity(dataset, is_humaneval=True, is
     smallest = 100
     for idx, per_data in enumerate(dataset):
         if is_humaneval:
-            code = per_data['canonical_solution']
+            code = per_data['ground_truth_code']
             code = 'def function():\n' + code
         elif is_apps==False:
-            code = per_data['code']
+            code = per_data['ground_truth_code']
         else:
-            if idx == 100 or idx == 455 or idx == 499:
+            if idx == 100 or idx == 455 or idx == 499 or idx == 2888 or idx == 2924:
                 code = per_data['ground_truth_code_list'][1]
+            elif idx == 559 or idx == 1431 or idx==2653 or idx==2661 or idx==2721:
+                code = per_data['ground_truth_code_list'][2]
+            elif idx == 2723:
+                code = per_data['ground_truth_code_list'][10]
+            elif idx == 2598 or idx == 2726 or idx == 3763:
+                continue
             else:
                 code = per_data['ground_truth_code']
         largest = max(largest, calculate_cognitive_complexity(code))
@@ -223,7 +257,7 @@ def calculate_weighted_complexity(code, largest_physical_loc, smallest_physical_
         weights['cognitive_complexity'] * normalized_cognitive_complexity
     )
     
-    return weighted_complexity
+    return weighted_complexity, normalized_physical_loc * 100, normalized_cyclomatic_complexity * 100, normalized_halstead_complexity * 100, normalized_mi * 100, normalized_cognitive_complexity * 100
 
 
 
@@ -238,7 +272,7 @@ def count_physical_loc(code_string):
 
 def calculate_cyclomatic_complexity(code):
     # Analyze the code
-    # print(code)
+    # print('Code:' + code)
     blocks = cc_visit(code)
     # for block in blocks:
     #     print(f'{block.name}: {block.complexity}')

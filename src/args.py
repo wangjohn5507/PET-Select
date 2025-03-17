@@ -12,11 +12,7 @@ def get_args():
     parser.add_argument('--end', type=int, default=0)
     parser.add_argument('--technique', type=str, default='Zeroshot')
     #evaluation
-    parser.add_argument('--evaluation', action='store_true', default=False)
-    parser.add_argument('--finalize', action='store_true', default=False)
-    parser.add_argument('--balance', action='store_true', default=False)
     parser.add_argument('--complexity', type=float, default=0.0)
-    parser.add_argument('--difficulty', type=int, default=1)
-    parser.add_argument('--type', type = int, default = 1)
     parser.add_argument('--fold', type = int, default = 0)
+    parser.add_argument('--top_k', type = int, default = 1)
     return parser.parse_args()
