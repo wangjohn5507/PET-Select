@@ -100,7 +100,7 @@ Notes: Remember to change all the configurations in the bash script.
 
 ## Citation
 ```bash
-@article{wang2025petselect,
+@article{2025petselect,
   title={Prompting Techniques Selection for Code Generation with Contrastive Complexity Prediction},
   year={2025}
 }
