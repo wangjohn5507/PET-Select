@@ -24,16 +24,6 @@ This repository provides the implementation of PET-Select.
  ┗ 📜 main.py                           # Entry code for running each technique
 ```
 
-## Installation
-
-To get started, clone this repository and install the required dependencies:
-
-```bash
-git clone https://github.com/wangjohn5507/PET-Select.git
-cd PET-Select
-pip install -r requirements.txt
-```
-
 ## Usage
 
 You can run the dataset for each prompt engineering technique using:
